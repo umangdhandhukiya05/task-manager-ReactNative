@@ -1,0 +1,47 @@
+import { connectDB } from "@/lib/db";
+import auth from "@/middleware/auth";
+import Project from "@/models/ProjectSchema";
+
+export default async function Get(req, res) {
+  if (req.method !== "GET") {
+    return res.status(405).json({ message: "Method not allowed" });
+  }
+
+  await connectDB();
+
+  auth(req, res, async () => {
+    try {
+      // query params
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const search = req.query.search || "";
+      const sort = req.query.sort || "createdAt";
+
+      const skip = (page - 1) * limit;
+
+      //search condition
+      const searchQuery = {
+        user: req.userId,
+        title: { $regex: search, $options: "i" },
+      };
+
+      //get projects
+      const projects = await Project.find(searchQuery)
+        .sort({ [sort]: -1 })
+        .skip(skip)
+        .limit(limit);
+
+      const total = await Project.countDocuments(searchQuery);
+
+      return res.status(200).json({
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+        projects,
+      });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  });
+}
