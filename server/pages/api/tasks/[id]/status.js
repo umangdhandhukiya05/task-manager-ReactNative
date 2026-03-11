@@ -2,7 +2,7 @@ import { connectDB } from "@/lib/db";
 import Task from "@/models/TaskSchema";
 import auth from "@/middleware/auth";
 
-export default async function Patch(req, res) {
+export default async function handler(req, res) {
   auth(req, res, async () => {
     try {
       await connectDB();
@@ -11,18 +11,32 @@ export default async function Patch(req, res) {
         return res.status(405).json({ message: "Method not allowed" });
       }
 
-      const { id } = req.query;
+      const { taskId } = req.query;
       const { status } = req.body;
 
       if (!status) {
         return res.status(400).json({ message: "Status is required" });
       }
 
-      const task = await Task.findByIdAndUpdate(id, { status }, { new: true });
+      const task = await Task.findById(taskId);
 
       if (!task) {
         return res.status(404).json({ message: "Task not found" });
       }
+
+      const userId = req.userId;
+
+      if (
+        task.createdBy.toString() !== userId &&
+        task.assignedToUser?.toString() !== userId
+      ) {
+        return res.status(403).json({
+          message: "You are not allowed to update this task",
+        });
+      }
+
+      task.status = status;
+      await task.save();
 
       return res.status(200).json({
         message: "Task status updated successfully",

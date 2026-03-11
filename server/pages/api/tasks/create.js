@@ -7,8 +7,18 @@ export default async function Post(req, res) {
     try {
       await connectDB();
 
+      const { projectId } = req.query;
+
+      console.log(projectId)
+
       const { title, description, status, priority, dueDate, assignedToUser } =
         req.body;
+
+        console.log(req.body)
+
+      if (!projectId) {
+        return res.status(400).json({ message: "projectId is required" });
+      }
 
       if (!title || !description || !dueDate || !assignedToUser) {
         return res.status(400).json({ message: "all fields required" });
@@ -21,10 +31,14 @@ export default async function Post(req, res) {
         priority: priority || "Medium",
         dueDate,
         assignedToUser,
+        project: projectId,
         createdBy: req.userId,
       });
 
-      return res.status(200).json({ message: "task added successfully", task });
+      return res.status(201).json({
+        message: "task added successfully",
+        task,
+      });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }

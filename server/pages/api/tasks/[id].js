@@ -19,14 +19,8 @@ export default async function handler(req, res) {
           assignedToUser,
         } = req.body;
 
-        const task = await Task.findById(id);
-
-        if (!task) {
-          return res.status(404).json({ message: "Task not found" });
-        }
-
-        const updatedTask = await Task.findByIdAndUpdate(
-          id,
+        const updatedTask = await Task.findOneAndUpdate(
+          { _id: id, createdBy: req.userId }, // security check
           {
             title,
             description,
@@ -35,14 +29,21 @@ export default async function handler(req, res) {
             dueDate,
             assignedToUser,
           },
-          { new: true },
+          { new: true }
         );
+
+        if (!updatedTask) {
+          return res.status(404).json({ message: "Task not found" });
+        }
 
         return res.status(200).json({
           message: "Task updated successfully",
           task: updatedTask,
         });
       }
+
+      return res.status(405).json({ message: "Method not allowed" });
+
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
