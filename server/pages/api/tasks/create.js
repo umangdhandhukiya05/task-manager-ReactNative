@@ -2,6 +2,7 @@ import { connectDB } from "@/lib/db";
 import Task from "@/models/TaskSchema";
 import auth from "@/middleware/auth";
 
+//add new task according project
 export default async function Post(req, res) {
   auth(req, res, async () => {
     try {
@@ -9,12 +10,8 @@ export default async function Post(req, res) {
 
       const { projectId } = req.query;
 
-      console.log(projectId)
-
       const { title, description, status, priority, dueDate, assignedToUser } =
         req.body;
-
-        console.log(req.body)
 
       if (!projectId) {
         return res.status(400).json({ message: "projectId is required" });

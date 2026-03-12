@@ -2,6 +2,7 @@ import { connectDB } from "@/lib/db";
 import Task from "@/models/TaskSchema";
 import auth from "@/middleware/auth";
 
+//update whole task by task creator
 export default async function handler(req, res) {
   auth(req, res, async () => {
     try {
@@ -20,7 +21,7 @@ export default async function handler(req, res) {
         } = req.body;
 
         const updatedTask = await Task.findOneAndUpdate(
-          { _id: id, createdBy: req.userId }, // security check
+          { _id: id, createdBy: req.userId },
           {
             title,
             description,
@@ -29,9 +30,9 @@ export default async function handler(req, res) {
             dueDate,
             assignedToUser,
           },
-          { new: true }
+          { new: true },
         );
-
+        
         if (!updatedTask) {
           return res.status(404).json({ message: "Task not found" });
         }
@@ -41,9 +42,6 @@ export default async function handler(req, res) {
           task: updatedTask,
         });
       }
-
-      return res.status(405).json({ message: "Method not allowed" });
-
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }

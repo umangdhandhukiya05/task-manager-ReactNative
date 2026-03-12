@@ -17,24 +17,24 @@ import { Dropdown } from 'react-native-element-dropdown';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Calendar } from 'react-native-calendars';
 import { allUsers } from '@/api/userApi';
-import { addTask } from '@/api/taskApi';
+import { updateTask } from '@/api/taskApi';
 import { styles } from '@/style/addTaskForm';
 
-export default function AddTaskScreen({ navigation, route }) {
+export default function EditTaskScreen({ route, navigation }) {
+  const { task } = route.params;
+
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm();
 
   const [calendarVisible, setCalendarVisible] = useState(false);
-  const [date, setDate] = useState(null);
-
+  const [date, setDate] = useState(task.dueDate);
   const [users, setUsers] = useState([]);
 
   const today = new Date().toISOString().split('T')[0];
-
-  const { projectId } = route.params;
 
   const statusData = [
     { label: 'Todo', value: 'todo' },
@@ -51,18 +51,13 @@ export default function AddTaskScreen({ navigation, route }) {
   const getUsers = async () => {
     try {
       const res = await allUsers();
-      //   console.log(res?.data?.users);
 
       const formattedUsers = res?.data?.users?.map(user => ({
         label: user.name,
         value: user._id,
       }));
 
-      console.log(formattedUsers);
-
       setUsers(formattedUsers);
-
-      console.log(users);
     } catch (error) {
       console.log('User fetch error:', error);
     }
@@ -70,19 +65,29 @@ export default function AddTaskScreen({ navigation, route }) {
 
   useEffect(() => {
     getUsers();
+
+    // Prefill form values
+    setValue('title', task.title);
+    setValue('description', task.description);
+    setValue('assignedToUser', task.assignedToUser?._id);
+    setValue('status', task.status);
+    setValue('priority', task.priority);
   }, []);
 
   const onSubmit = async data => {
     try {
-      const taskDetail = {
+      const updatedTask = {
         ...data,
         dueDate: date,
       };
-      const result = await addTask(projectId, taskDetail);
-      Alert.alert('Success', 'Task Assigned');
+
+      await updateTask(task._id, updatedTask);
+
+      Alert.alert('Success', 'Task Updated');
+
       navigation.goBack();
     } catch (error) {
-      console.log('Create task error:', error);
+      console.log('Update task error:', error);
     }
   };
 
@@ -93,20 +98,16 @@ export default function AddTaskScreen({ navigation, route }) {
         style={{ flex: 1 }}
       >
         <ScrollView contentContainerStyle={styles.container}>
-          <Text style={styles.title}>Add New Task</Text>
+          <Text style={styles.title}>Edit Task</Text>
 
           <Text style={styles.label}>Title</Text>
 
           <Controller
             control={control}
             name="title"
-            rules={{
-              required: 'Title is required',
-              minLength: { value: 3, message: 'Minimum 3 characters' },
-            }}
+            rules={{ required: 'Title required' }}
             render={({ field: { onChange, value } }) => (
               <TextInput
-                placeholder="Enter task title"
                 style={[styles.input, errors.title && styles.errorInput]}
                 value={value}
                 onChangeText={onChange}
@@ -114,119 +115,84 @@ export default function AddTaskScreen({ navigation, route }) {
             )}
           />
 
-          {errors.title && (
-            <Text style={styles.errorText}>{errors.title.message}</Text>
-          )}
-
           <Text style={styles.label}>Description</Text>
 
           <Controller
             control={control}
             name="description"
-            rules={{
-              required: 'Description is required',
-              minLength: { value: 10, message: 'Minimum 10 characters' },
-            }}
+            rules={{ required: 'Description required' }}
             render={({ field: { onChange, value } }) => (
               <TextInput
-                placeholder="Enter description"
                 multiline
-                style={[
-                  styles.input,
-                  { height: 100 },
-                  errors.description && styles.errorInput,
-                ]}
+                style={[styles.input, { height: 100 }]}
                 value={value}
                 onChangeText={onChange}
               />
             )}
           />
 
-          {errors.description && (
-            <Text style={styles.errorText}>{errors.description.message}</Text>
-          )}
-
           <Text style={styles.label}>Assign To</Text>
 
           <Controller
             control={control}
             name="assignedToUser"
-            rules={{ required: 'User is required' }}
+            rules={{ required: 'User required' }}
             render={({ field: { onChange, value } }) => (
               <Dropdown
-                style={[
-                  styles.dropdown,
-                  errors.assignedTo && styles.errorInput,
-                ]}
+                style={styles.dropdown}
                 data={users}
                 labelField="label"
                 valueField="value"
-                placeholder="Select User"
                 value={value}
+                placeholder="Select user"
                 onChange={item => onChange(item.value)}
               />
             )}
           />
-
-          {errors.assignedTo && (
-            <Text style={styles.errorText}>{errors.assignedTo.message}</Text>
-          )}
 
           <Text style={styles.label}>Status</Text>
 
           <Controller
             control={control}
             name="status"
-            rules={{ required: 'Status is required' }}
             render={({ field: { onChange, value } }) => (
               <Dropdown
-                style={[styles.dropdown, errors.status && styles.errorInput]}
+                style={styles.dropdown}
                 data={statusData}
                 labelField="label"
                 valueField="value"
-                placeholder="Select status"
                 value={value}
+                placeholder="Select status"
                 onChange={item => onChange(item.value)}
               />
             )}
           />
-
-          {errors.status && (
-            <Text style={styles.errorText}>{errors.status.message}</Text>
-          )}
 
           <Text style={styles.label}>Priority</Text>
 
           <Controller
             control={control}
             name="priority"
-            rules={{ required: 'Priority is required' }}
             render={({ field: { onChange, value } }) => (
               <Dropdown
-                style={[styles.dropdown, errors.priority && styles.errorInput]}
+                style={styles.dropdown}
                 data={priorityData}
                 labelField="label"
                 valueField="value"
-                placeholder="Select priority"
                 value={value}
+                placeholder="Select priority"
                 onChange={item => onChange(item.value)}
               />
             )}
           />
 
-          {errors.priority && (
-            <Text style={styles.errorText}>{errors.priority.message}</Text>
-          )}
-
           <Text style={styles.label}>Due Date</Text>
 
           <TouchableOpacity
-            style={[styles.dateBtn, !date && styles.errorInput]}
+            style={styles.dateBtn}
             onPress={() => setCalendarVisible(true)}
           >
-            <Text style={styles.dateText}>
-              {date ? date : 'Select Due Date'}
-            </Text>
+            <Text>{date || 'Select Date'}</Text>
           </TouchableOpacity>
 
           <Modal visible={calendarVisible} transparent animationType="slide">
@@ -239,10 +205,7 @@ export default function AddTaskScreen({ navigation, route }) {
                     setCalendarVisible(false);
                   }}
                   markedDates={{
-                    [date]: {
-                      selected: true,
-                      selectedColor: '#FF7A00',
-                    },
+                    [date]: { selected: true, selectedColor: '#FF7A00' },
                   }}
                 />
 
@@ -260,7 +223,7 @@ export default function AddTaskScreen({ navigation, route }) {
             style={styles.button}
             onPress={handleSubmit(onSubmit)}
           >
-            <Text style={styles.buttonText}>Create Task</Text>
+            <Text style={styles.buttonText}>Update Task</Text>
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>

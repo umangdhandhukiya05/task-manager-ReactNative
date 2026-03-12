@@ -2,6 +2,7 @@ import { connectDB } from "@/lib/db";
 import Task from "@/models/TaskSchema";
 import auth from "@/middleware/auth";
 
+//in this user can only change status
 export default async function handler(req, res) {
   auth(req, res, async () => {
     try {
@@ -11,19 +12,21 @@ export default async function handler(req, res) {
         return res.status(405).json({ message: "Method not allowed" });
       }
 
-      const { taskId } = req.query;
+      //task id and status
+      const { id } = req.query;
       const { status } = req.body;
 
       if (!status) {
         return res.status(400).json({ message: "Status is required" });
       }
 
-      const task = await Task.findById(taskId);
-
+      //check task is there or not
+      const task = await Task.findById(id);
       if (!task) {
         return res.status(404).json({ message: "Task not found" });
       }
 
+      //check role user is owner or assignedUser
       const userId = req.userId;
 
       if (
@@ -34,7 +37,7 @@ export default async function handler(req, res) {
           message: "You are not allowed to update this task",
         });
       }
-
+      
       task.status = status;
       await task.save();
 

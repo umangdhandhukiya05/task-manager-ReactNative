@@ -2,9 +2,8 @@ import { connectDB } from "@/lib/db";
 import User from "@/models/UserSchema";
 import bcrypt from "bcryptjs";
 
+//register new user
 export default async function Post(req, res) {
-  // console.log(req.body);
-
   try {
     await connectDB();
 

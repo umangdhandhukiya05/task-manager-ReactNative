@@ -13,6 +13,8 @@ import {
 } from 'react-native';
 
 import { Dropdown } from 'react-native-element-dropdown';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { styles } from '@/style/taskScreen';
 
 export default function TaskScreen({ route, navigation }) {
   const { id } = route.params;
@@ -42,7 +44,9 @@ export default function TaskScreen({ route, navigation }) {
   const fetchTasks = async () => {
     try {
       const res = await getProjectTasks(id, { search, status, priority });
-      setTasks(res?.data?.tasks || []);
+      console.log(res);
+      setTasks(res?.data?.tasks);
+      // console.log('----------tasks', tasks);
     } catch (error) {
       console.log('Fetch tasks error:', error);
     } finally {
@@ -69,7 +73,7 @@ export default function TaskScreen({ route, navigation }) {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView edges={['bottom']} style={styles.container}>
       <View style={styles.searchRow}>
         <TextInput
           placeholder="Search tasks..."
@@ -80,7 +84,7 @@ export default function TaskScreen({ route, navigation }) {
 
         <TouchableOpacity
           style={styles.addButton}
-          onPress={() => navigation.navigate('AddTask')}
+          onPress={() => navigation.navigate('AddTask', { projectId: id })}
         >
           <Text style={styles.addText}>＋</Text>
         </TouchableOpacity>
@@ -120,72 +124,6 @@ export default function TaskScreen({ route, navigation }) {
           <Text style={styles.emptyText}>No tasks found</Text>
         }
       />
-    </View>
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: '#F5F5F5',
-  },
-
-  loader: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  searchRow: {
-    flexDirection: 'row',
-    marginBottom: 10,
-  },
-
-  search: {
-    flex: 1,
-    backgroundColor: '#FFF',
-    padding: 10,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#DDD',
-    marginRight: 8,
-  },
-
-  filterRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 12,
-  },
-
-  dropdown: {
-    width: '48%',
-    height: 42,
-    backgroundColor: '#FFF',
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#DDD',
-    paddingHorizontal: 10,
-  },
-
-  emptyText: {
-    textAlign: 'center',
-    marginTop: 40,
-    color: '#888',
-  },
-
-  addButton: {
-    backgroundColor: '#FF7A00',
-    height: 42,
-    width: 42,
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  addText: {
-    color: '#FFF',
-    fontSize: 22,
-    fontWeight: '600',
-  },
-});

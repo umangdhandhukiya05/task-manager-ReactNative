@@ -4,50 +4,65 @@ import { useSelector } from 'react-redux';
 import { Dropdown } from 'react-native-element-dropdown';
 import { useNavigation } from '@react-navigation/native';
 import { updateTaskStatus } from '@/api/taskApi';
+import { Icon } from '@rneui/themed';
+import { styles } from '@/style/TaskCard';
 
 function TaskCard({ task }) {
   const navigation = useNavigation();
 
+  //from redux store
   const user = useSelector(state => state.auth.user);
   const currentUserId = user?._id;
-  console.log(user)
 
   const [status, setStatus] = useState(task.status);
 
+  //for priority chip color
   const priorityColor = {
     Low: '#9CA3AF',
     Medium: '#F59E0B',
     High: '#EF4444',
   };
 
+  //for status chip color
   const statusColor = {
     todo: '#6B7280',
     inProgress: '#F59E0B',
     done: '#10B981',
   };
 
+  //deopdown value for status change
   const statusOptions = [
     { label: 'Todo', value: 'todo' },
     { label: 'In Progress', value: 'inProgress' },
     { label: 'Done', value: 'done' },
   ];
 
-  const isCreator = task.createdBy?._id === currentUserId;
-  const isAssignedUser = task.assignedToUser?._id === currentUserId;
+  //verify current user is task creator or task assignedToUser
+  const isCreator =
+    String(task.createdBy?._id || task.createdBy) === String(currentUserId);
+
+  const isAssignedUser =
+    String(task.assignedToUser?._id || task.assignedToUser) ===
+    String(currentUserId);
+
+  //handle dropdown visibility
+  const isCompleted = status === 'done';
 
   const handleStatusChange = async value => {
     try {
-      setStatus(value);
+      setStatus(value); // update ui immediately
       await updateTaskStatus(task._id, value);
     } catch (error) {
       console.log('Status update error', error);
     }
   };
 
+  //edit function
   const handleEdit = () => {
     navigation.navigate('EditTask', { task });
   };
 
+  //date formatiing
   const formatDate = date => {
     if (!date) return '';
     return new Date(date).toLocaleDateString();
@@ -58,9 +73,10 @@ function TaskCard({ task }) {
       <View style={styles.header}>
         <Text style={styles.title}>{task.title}</Text>
 
+        {/* show when current user is creator */}
         {isCreator && (
-          <TouchableOpacity style={styles.editBtn} onPress={handleEdit}>
-            <Text style={styles.editText}>Edit</Text>
+          <TouchableOpacity onPress={handleEdit}>
+            <Icon name="edit" type="material" color="#FF7A00" />
           </TouchableOpacity>
         )}
       </View>
@@ -87,7 +103,8 @@ function TaskCard({ task }) {
         </View>
       </View>
 
-      {isAssignedUser && (
+      {/* show when current user is assigned user and task is not completed */}
+      {isAssignedUser && !isCompleted && (
         <Dropdown
           style={styles.dropdown}
           data={statusOptions}
@@ -106,79 +123,3 @@ function TaskCard({ task }) {
 
 const MemoTaskCard = React.memo(TaskCard);
 export default MemoTaskCard;
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: '#FFF',
-    padding: 16,
-    borderRadius: 14,
-    marginBottom: 14,
-    elevation: 3,
-  },
-
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-
-  title: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#333',
-  },
-
-  editBtn: {
-    backgroundColor: '#FF7A00',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 6,
-  },
-
-  editText: {
-    color: '#FFF',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-
-  description: {
-    marginTop: 6,
-    color: '#555',
-    fontSize: 14,
-  },
-
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 10,
-  },
-
-  chip: {
-    paddingVertical: 4,
-    paddingHorizontal: 10,
-    borderRadius: 20,
-    marginRight: 8,
-  },
-
-  chipText: {
-    color: '#FFF',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-
-  dropdown: {
-    marginTop: 10,
-    width: 160,
-    height: 36,
-    borderWidth: 1,
-    borderColor: '#DDD',
-    borderRadius: 8,
-    paddingHorizontal: 8,
-  },
-
-  dueDate: {
-    marginTop: 10,
-    fontSize: 12,
-    color: '#888',
-  },
-});

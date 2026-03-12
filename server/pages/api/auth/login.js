@@ -3,6 +3,7 @@ import User from "@/models/UserSchema";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
+//user login api
 export default async function Post(req, res) {
   try {
     await connectDB();
@@ -12,18 +13,21 @@ export default async function Post(req, res) {
     if (!email || !password) {
       return res.status(400).json({ message: "All fields required" });
     }
+    //not allow duplicate
     const user = await User.findOne({ email });
 
     if (!user) {
       return res.status(400).json({ message: "User not found" });
     }
 
+    //password matching
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid password" });
     }
 
+    //token creation
     const token = jwt.sign(
       {
         userId: user._id,

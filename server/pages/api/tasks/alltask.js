@@ -1,6 +1,7 @@
 import { connectDB } from "@/lib/db";
 import Task from "@/models/TaskSchema";
 import auth from "@/middleware/auth";
+import User from "@/models/UserSchema";
 import mongoose from "mongoose";
 
 export default async function Get(req, res) {
@@ -10,10 +11,12 @@ export default async function Get(req, res) {
 
       const { status, priority, search, projectId } = req.query;
 
+      //show task according project
       if (!projectId) {
         return res.status(400).json({ message: "projectId is required" });
       }
 
+      //filter according search,priority or status also check user is creator or not
       const filter = {
         project: new mongoose.Types.ObjectId(projectId),
         $or: [{ createdBy: req.userId }, { assignedToUser: req.userId }],
@@ -33,6 +36,7 @@ export default async function Get(req, res) {
         ];
       }
 
+      //find task then send response along with assignedTOuse is
       const tasks = await Task.find(filter)
         .populate("assignedToUser", "name email")
         .sort({ createdAt: -1 });

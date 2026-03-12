@@ -1,8 +1,10 @@
 import jwt from "jsonwebtoken";
 
+//auth middleware
 export default function auth(req, res, next) {
   const authHeader = req.headers.authorization;
 
+  //not token in header then un authorised
   if (!authHeader) {
     return res.status(401).json({ message: "No token provided" });
   }
@@ -17,6 +19,7 @@ export default function auth(req, res, next) {
 
     next();
   } catch (error) {
+    console.log(error);
     return res.status(401).json({ message: "Invalid token" });
   }
 }

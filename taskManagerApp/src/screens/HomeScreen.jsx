@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   FlatList,
@@ -12,6 +12,10 @@ import {
 
 import ProjectCard from '../components/ProjectCard';
 import { getAllProjects, deleteProject } from '../api/projectApi';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSelector } from 'react-redux';
+import { useFocusEffect } from '@react-navigation/native';
+import { styles } from '@/style/home';
 
 export default function HomeScreen({ navigation }) {
   const [projects, setProjects] = useState([]);
@@ -20,6 +24,9 @@ export default function HomeScreen({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
 
   const [search, setSearch] = useState('');
+
+  const user = useSelector(state => state.auth.user);
+  console.log(user);
 
   const fetchProjects = async (searchText = '') => {
     try {
@@ -34,9 +41,11 @@ export default function HomeScreen({ navigation }) {
     }
   };
 
-  useEffect(() => {
-    fetchProjects();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchProjects();
+    }),
+  );
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -75,7 +84,8 @@ export default function HomeScreen({ navigation }) {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView edges={['bottom']} style={styles.container}>
+      <Text>Welcome, {user?.name}</Text>
       <View style={styles.topBar}>
         <TextInput
           placeholder="Search projects..."
@@ -93,12 +103,18 @@ export default function HomeScreen({ navigation }) {
       </View>
 
       <FlatList
+        ListHeaderComponent={
+          <Text style={styles.headerText}>All Projects</Text>
+        }
         data={projects}
         keyExtractor={item => item._id}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
           <ProjectCard
             project={item}
+            onPress={() =>
+              navigation.navigate('ProjectDetail', { id: item._id })
+            }
             onEdit={() => navigation.navigate('EditProject', { project: item })}
             onDelete={handleDelete}
             onViewTasks={() =>
@@ -109,51 +125,6 @@ export default function HomeScreen({ navigation }) {
         refreshing={refreshing}
         onRefresh={handleRefresh}
       />
-    </View>
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: '#F5F5F5',
-  },
-
-  topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 15,
-  },
-
-  search: {
-    flex: 1,
-    backgroundColor: '#FFF',
-    padding: 12,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#DDD',
-  },
-
-  addButton: {
-    marginLeft: 10,
-    backgroundColor: '#FF7A00',
-    height: 48,
-    width: 48,
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  addText: {
-    color: '#FFF',
-    fontSize: 24,
-    fontWeight: '600',
-  },
-
-  loader: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
