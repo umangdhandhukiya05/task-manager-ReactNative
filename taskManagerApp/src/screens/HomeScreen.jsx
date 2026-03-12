@@ -23,28 +23,51 @@ export default function HomeScreen({ navigation }) {
   const [initialLoading, setInitialLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
+  //pagination
+  const [page, setPage] = useState(1);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+
   const [search, setSearch] = useState('');
 
   const user = useSelector(state => state.auth.user);
-  console.log(user);
 
-  const fetchProjects = async (searchText = '') => {
+  const fetchProjects = async (searchText = '', pageNumber = 1) => {
     try {
-      const response = await getAllProjects(1, searchText);
+      const response = await getAllProjects(pageNumber, searchText);
+
       const newProjects = response?.data?.projects || [];
 
-      setProjects(newProjects);
+      if (pageNumber === 1) {
+        setProjects(newProjects);
+      } else {
+        setProjects(prev => [...prev, ...newProjects]);
+      }
+
+      if (newProjects.length === 0) {
+        setHasMore(false);
+      }
     } catch (error) {
-      console.log('Fetch projects error:', error);
+      console.log(error);
     } finally {
       setInitialLoading(false);
+      setLoadingMore(false);
+    }
+  };
+
+  const loadMore = () => {
+    if (!loadingMore && hasMore) {
+      const nextPage = page + 1;
+      setPage(nextPage);
+      setLoadingMore(true);
+      fetchProjects(search, nextPage);
     }
   };
 
   useFocusEffect(
     useCallback(() => {
-      fetchProjects();
-    }),
+      fetchProjects(search);
+    }, [search]),
   );
 
   const handleRefresh = async () => {
@@ -72,7 +95,8 @@ export default function HomeScreen({ navigation }) {
 
   const handleSearch = text => {
     setSearch(text);
-    fetchProjects(text);
+    setPage(1);
+    fetchProjects(text, 1);
   };
 
   if (initialLoading) {
@@ -103,12 +127,9 @@ export default function HomeScreen({ navigation }) {
       </View>
 
       <FlatList
-        ListHeaderComponent={
-          <Text style={styles.headerText}>All Projects</Text>
-        }
         data={projects}
-        keyExtractor={item => item._id}
         showsVerticalScrollIndicator={false}
+        keyExtractor={item => item._id}
         renderItem={({ item }) => (
           <ProjectCard
             project={item}
@@ -122,6 +143,8 @@ export default function HomeScreen({ navigation }) {
             }
           />
         )}
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.5}
         refreshing={refreshing}
         onRefresh={handleRefresh}
       />
