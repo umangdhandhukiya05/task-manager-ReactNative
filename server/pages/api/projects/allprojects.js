@@ -25,9 +25,11 @@ export default async function Get(req, res) {
 
     //get projects
     const projects = await Project.find(searchQuery)
+      .populate("user", "_id name email")
       .sort({ [sort]: -1 })
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
+      .lean();
 
     const total = await Project.countDocuments(searchQuery);
 

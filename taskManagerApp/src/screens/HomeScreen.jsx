@@ -109,7 +109,7 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>
-      <Text>Welcome, {user?.name}</Text>
+      <Text style={styles.welcomeUser}>Welcome, {user?.name}</Text>
       <View style={styles.topBar}>
         <TextInput
           placeholder="Search projects..."

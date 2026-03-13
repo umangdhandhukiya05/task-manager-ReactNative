@@ -49,4 +49,9 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+
+  welcomeUser:{
+    fontSize:22,
+    paddingBottom:12
+  }
 });

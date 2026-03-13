@@ -19,6 +19,7 @@ import { Calendar } from 'react-native-calendars';
 import { allUsers } from '@/api/userApi';
 import { addTask } from '@/api/taskApi';
 import { styles } from '@/style/addTaskForm';
+import Toast from 'react-native-toast-message';
 
 export default function AddTaskScreen({ navigation, route }) {
   const {
@@ -58,11 +59,7 @@ export default function AddTaskScreen({ navigation, route }) {
         value: user._id,
       }));
 
-      console.log(formattedUsers);
-
       setUsers(formattedUsers);
-
-      console.log(users);
     } catch (error) {
       console.log('User fetch error:', error);
     }
@@ -79,8 +76,11 @@ export default function AddTaskScreen({ navigation, route }) {
         dueDate: date,
       };
       const result = await addTask(projectId, taskDetail);
-      Alert.alert('Success', 'Task Assigned');
       navigation.goBack();
+      Toast.show({
+        type: 'success',
+        text1: result?.data?.message,
+      });
     } catch (error) {
       console.log('Create task error:', error);
     }

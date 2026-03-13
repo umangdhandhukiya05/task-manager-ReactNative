@@ -44,7 +44,7 @@ export default function TaskScreen({ route, navigation }) {
   const fetchTasks = async () => {
     try {
       const res = await getProjectTasks(id, { search, status, priority });
-      console.log(res);
+      // console.log(res);
       setTasks(res?.data?.tasks);
       // console.log('----------tasks', tasks);
     } catch (error) {

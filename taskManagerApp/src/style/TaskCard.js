@@ -19,6 +19,7 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     color: '#333',
+    maxWidth:"80%",
   },
 
   editBtn: {
@@ -38,6 +39,7 @@ export const styles = StyleSheet.create({
     marginTop: 6,
     color: '#555',
     fontSize: 14,
+    maxWidth:"80%"
   },
 
   row: {

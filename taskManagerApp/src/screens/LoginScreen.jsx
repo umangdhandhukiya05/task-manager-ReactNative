@@ -29,16 +29,22 @@ export default function LoginScreen({ navigation }) {
   const onSubmit = async data => {
     try {
       const res = await loginUser(data);
-
       const token = res.data.token;
 
       await AsyncStorage.setItem('token', token);
 
       const response = await getUser();
-
       dispatch(setUser(response.data.user));
+
+      Toast.show({
+        type: 'success',
+        text1: res.data.message,
+      });
     } catch (error) {
-      console.log(error);
+      Toast.show({
+        type: 'error',
+        text1: error?.response?.data?.message,
+      });
     }
   };
 

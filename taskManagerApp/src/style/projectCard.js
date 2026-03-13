@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   card: {
@@ -13,11 +13,20 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     color: '#333',
+    maxWidth: '80%',
+  },
+
+  creator: {
+    fontSize: 12,
+    color: '#666',
+    marginTop: 2,
+    marginBottom: 4,
   },
 
   description: {
     marginTop: 6,
     color: '#666',
+    maxWidth: '80%',
   },
 
   actions: {

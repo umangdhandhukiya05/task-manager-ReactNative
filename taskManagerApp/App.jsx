@@ -22,6 +22,7 @@ import TaskScreen from '@/screens/TaskScreen';
 import AddTaskScreen from '@/screens/AddTaskScreen';
 import EditTaskScreen from '@/screens/EditTaskScreen';
 import ProjectDetailScreen from '@/screens/ProjectDetailScreen';
+import { Icon } from '@rneui/themed';
 
 const Stack = createNativeStackNavigator();
 
@@ -68,7 +69,13 @@ function AppContent() {
               title: 'Projects',
               headerBackVisible: false,
               headerRight: () => (
-                <Button title="Logout" color="#FF7A00" onPress={handleLogout} />
+                // <Button title="Logout" color="#FF7A00" onPress={handleLogout} />
+                <Icon
+                  name="logout"
+                  type="material"
+                  color="#FF7A00"
+                  onPress={handleLogout}
+                />
               ),
             }}
           />
@@ -77,7 +84,7 @@ function AppContent() {
             name="ProjectDetail"
             component={ProjectDetailScreen}
             options={{
-              title: 'Project Detail',
+              title: 'Project detail',
               headerBackButtonDisplayMode: 'minimal',
             }}
           />
@@ -85,31 +92,43 @@ function AppContent() {
           <Stack.Screen
             name="AddProject"
             component={AddProjectScreen}
-            options={{ headerBackButtonDisplayMode: 'minimal' }}
+            options={{
+              title: 'Add project',
+              headerBackButtonDisplayMode: 'minimal',
+            }}
           />
 
           <Stack.Screen
             name="EditProject"
             component={EditProjectScreen}
-            options={{ headerBackButtonDisplayMode: 'minimal' }}
+            options={{
+              title: 'Edit project',
+              headerBackButtonDisplayMode: 'minimal',
+            }}
           />
 
           <Stack.Screen
             name="ProjectTasks"
             component={TaskScreen}
-            options={{ title: 'Tasks' }}
+            options={{ title: 'Tasks', headerBackButtonDisplayMode: 'minimal' }}
           />
 
           <Stack.Screen
             name="AddTask"
             component={AddTaskScreen}
-            options={{ title: 'Add Task' }}
+            options={{
+              title: 'Add task',
+              headerBackButtonDisplayMode: 'minimal',
+            }}
           />
 
           <Stack.Screen
             name="EditTask"
             component={EditTaskScreen}
-            options={{ title: 'Edit Task' }}
+            options={{
+              title: 'Edit task',
+              headerBackButtonDisplayMode: 'minimal',
+            }}
           />
         </>
       ) : (

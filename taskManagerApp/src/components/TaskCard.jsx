@@ -71,7 +71,9 @@ function TaskCard({ task }) {
   return (
     <View style={styles.card}>
       <View style={styles.header}>
-        <Text style={styles.title}>{task.title}</Text>
+        <Text style={styles.title} numberOfLines={1}>
+          {task.title}
+        </Text>
 
         {/* show when current user is creator */}
         {isCreator && (
@@ -81,7 +83,9 @@ function TaskCard({ task }) {
         )}
       </View>
 
-      <Text style={styles.description}>{task.description}</Text>
+      <Text style={styles.description} numberOfLines={2}>
+        {task.description}
+      </Text>
 
       <View style={styles.row}>
         <View
@@ -117,6 +121,9 @@ function TaskCard({ task }) {
       )}
 
       <Text style={styles.dueDate}>Due: {formatDate(task.dueDate)}</Text>
+      <Text style={styles.dueDate}>
+        Assigned To: {task?.assignedToUser?.name}
+      </Text>
     </View>
   );
 }
