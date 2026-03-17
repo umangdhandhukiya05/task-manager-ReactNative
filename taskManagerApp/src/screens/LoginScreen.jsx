@@ -61,6 +61,10 @@ export default function LoginScreen({ navigation }) {
             name="email"
             rules={{
               required: 'Email is required',
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                message: 'Invalid email address',
+              },
             }}
             render={({ field: { onChange, value } }) => (
               <TextInput
@@ -82,9 +86,9 @@ export default function LoginScreen({ navigation }) {
             name="password"
             rules={{
               required: 'Password is required',
-              minLength: {
-                value: 6,
-                message: 'Minimum 6 characters',
+              pattern: {
+                value: strongPasswordRegex,
+                message: 'Min 8 character, 1 A-Z, 1 a-z, 1 number, 1 special character',
               },
             }}
             render={({ field: { onChange, value } }) => (

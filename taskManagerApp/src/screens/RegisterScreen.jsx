@@ -53,7 +53,7 @@ export default function RegisterScreen({ navigation }) {
             rules={{ required: 'Name is required' }}
             render={({ field: { onChange, value } }) => (
               <TextInput
-                placeholder="Enter name"
+                placeholder="Enter full name"
                 placeholderTextColor="#888"
                 value={value}
                 onChangeText={onChange}
@@ -71,6 +71,10 @@ export default function RegisterScreen({ navigation }) {
             name="email"
             rules={{
               required: 'Email is required',
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                message: 'Invalid email address',
+              },
             }}
             render={({ field: { onChange, value } }) => (
               <TextInput
@@ -93,9 +97,10 @@ export default function RegisterScreen({ navigation }) {
             name="password"
             rules={{
               required: 'Password required',
-              minLength: {
-                value: 6,
-                message: 'Minimum 6 characters',
+              pattern: {
+                value: strongPasswordRegex,
+                message:
+                  'Min 8 character, 1 A-Z, 1 a-z, 1 number, 1 special character',
               },
             }}
             render={({ field: { onChange, value } }) => (
