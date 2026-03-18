@@ -1,33 +1,14 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
+
 import { styles } from '@/style/addProjectForm';
-import { useForm } from 'react-hook-form';
-import { addProject } from '@/api/projectApi';
-import Toast from 'react-native-toast-message';
 import FormInput from '@/components/FormInput';
 import { ValidationRules } from '@/constants/formConstants';
+import { useAddProject } from '@/hooks/useAddProject';
 
-export default function AddProjectScreen({ navigation }) {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm();
-
-  const onSubmit = async data => {
-    const response = await addProject(data);
-    navigation.goBack();
-    Toast.show({
-      type: 'success',
-      text1: 'Project created successfully',
-      text2: response?.data?.message,
-    });
-  };
+export default function AddProjectScreen() {
+  const { control, handleSubmit, errors, isSubmitting, onSubmit } =
+    useAddProject();
 
   return (
     <View style={styles.container}>
@@ -59,11 +40,7 @@ export default function AddProjectScreen({ navigation }) {
       >
         {isSubmitting ? (
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <ActivityIndicator
-              size="small"
-              color="#fff"
-              style={{ marginLeft: 8 }}
-            />
+            <ActivityIndicator size="small" color="#fff" />
             <Text style={styles.buttonText}>Project Creating...</Text>
           </View>
         ) : (

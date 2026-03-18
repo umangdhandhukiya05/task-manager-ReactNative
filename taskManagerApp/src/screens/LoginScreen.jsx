@@ -8,47 +8,15 @@ import {
   Platform,
 } from 'react-native';
 
-import { useForm } from 'react-hook-form';
-import { getUser, loginUser } from '@/api/userApi';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Toast from 'react-native-toast-message';
-import { useDispatch } from 'react-redux';
-import { setUser } from '@/store/authSlice';
 import { styles } from '@/style/authForm';
 import FormInput from '@/components/FormInput';
 import { ValidationRules } from '@/constants/formConstants';
+import { useLogin } from '@/hooks/useLogin';
 
 export default function LoginScreen({ navigation }) {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm();
-
-  const dispatch = useDispatch();
-
-  const onSubmit = async data => {
-    try {
-      const res = await loginUser(data);
-      const token = res.data.token;
-
-      await AsyncStorage.setItem('token', token);
-
-      const response = await getUser();
-      dispatch(setUser(response.data.user));
-
-      Toast.show({
-        type: 'success',
-        text1: res.data.message,
-      });
-    } catch (error) {
-      Toast.show({
-        type: 'error',
-        text1: error?.response?.data?.message,
-      });
-    }
-  };
+  const { control, handleSubmit, errors, isSubmitting, onSubmit } =
+    useLogin(navigation);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -92,7 +60,7 @@ export default function LoginScreen({ navigation }) {
                 <Text style={styles.buttonText}>Signing in..</Text>
               </View>
             ) : (
-              <Text style={styles.buttonText}>Login</Text>
+              <Text style={styles.loginText}>Login</Text>
             )}
           </TouchableOpacity>
 

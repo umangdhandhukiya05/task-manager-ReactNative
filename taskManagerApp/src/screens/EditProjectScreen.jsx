@@ -1,45 +1,16 @@
-import React, { useEffect } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Alert,
-  ActivityIndicator,
-} from 'react-native';
+import React from 'react';
+import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 
-import { useForm } from 'react-hook-form';
-import { updateProject } from '@/api/projectApi';
 import { styles } from '@/style/addProjectForm';
 import FormInput from '@/components/FormInput';
 import { ValidationRules } from '@/constants/formConstants';
+import { useEditProject } from '@/hooks/useEditProject';
 
-export default function EditProjectScreen({ route, navigation }) {
+export default function EditProjectScreen({ route }) {
   const { project } = route.params;
 
-  const {
-    control,
-    handleSubmit,
-    setValue,
-    formState: { errors, isSubmitting },
-  } = useForm();
-
-  useEffect(() => {
-    setValue('title', project.title);
-    setValue('description', project.description);
-  }, []);
-
-  const onSubmit = async data => {
-    try {
-      await updateProject(project._id, data);
-
-      Alert.alert('Success', 'Project updated successfully');
-
-      navigation.goBack();
-    } catch (error) {
-      console.log('Update error:', error);
-      Alert.alert('Error', 'Failed to update project');
-    }
-  };
+  const { control, handleSubmit, errors, isSubmitting, onSubmit } =
+    useEditProject(project);
 
   return (
     <View style={styles.container}>
@@ -64,14 +35,14 @@ export default function EditProjectScreen({ route, navigation }) {
         multiline
       />
 
-      <TouchableOpacity style={styles.button} onPress={handleSubmit(onSubmit)} disabled={isSubmitting}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleSubmit(onSubmit)}
+        disabled={isSubmitting}
+      >
         {isSubmitting ? (
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <ActivityIndicator
-              size="small"
-              color="#fff"
-              style={{ marginLeft: 8 }}
-            />
+            <ActivityIndicator size="small" color="#fff" />
             <Text style={styles.buttonText}>Updating...</Text>
           </View>
         ) : (

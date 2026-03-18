@@ -1,10 +1,7 @@
-import { getProjectTasks } from '@/api/taskApi';
-import TaskCard from '@/components/TaskCard';
-import React, { useCallback, useEffect, useState } from 'react';
+import React from 'react';
 import {
   View,
   FlatList,
-  StyleSheet,
   ActivityIndicator,
   RefreshControl,
   TextInput,
@@ -14,55 +11,28 @@ import {
 
 import { Dropdown } from 'react-native-element-dropdown';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useFocusEffect } from '@react-navigation/native';
+import TaskCard from '@/components/TaskCard';
 import { styles } from '@/style/taskScreen';
-import { DropDownOption } from '@/constants/formConstants';
+import { useTasks } from '@/hooks/useTaskScreen';
+
 
 export default function TaskScreen({ route, navigation }) {
   const { id } = route.params;
 
-  const [tasks, setTasks] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-
-  const [search, setSearch] = useState('');
-  const [status, setStatus] = useState('');
-  const [priority, setPriority] = useState('');
-
-  const statusData = [
-    { label: 'All Status', value: '' },
-    ...DropDownOption.statusDropDown,
-  ];
-
-  const priorityData = [
-    { label: 'All Priority', value: '' },
-    ...DropDownOption.priorityDropDown,
-  ];
-
-  const fetchTasks = async () => {
-    try {
-      const res = await getProjectTasks(id, { search, status, priority });
-      // console.log(res);
-      setTasks(res?.data?.tasks);
-      // console.log('----------tasks', tasks);
-    } catch (error) {
-      console.log('Fetch tasks error:', error);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  };
-
-  useFocusEffect(
-    useCallback(() => {
-      fetchTasks();
-    }, [search, status, priority, id]),
-  );
-
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    await fetchTasks();
-  };
+  const {
+    tasks,
+    loading,
+    refreshing,
+    search,
+    setSearch,
+    status,
+    setStatus,
+    priority,
+    setPriority,
+    statusData,
+    priorityData,
+    handleRefresh,
+  } = useTasks(id);
 
   if (loading) {
     return (
@@ -84,7 +54,9 @@ export default function TaskScreen({ route, navigation }) {
 
         <TouchableOpacity
           style={styles.addButton}
-          onPress={() => navigation.navigate('AddTask', { projectId: id })}
+          onPress={() =>
+            navigation.navigate('AddTask', { projectId: id })
+          }
         >
           <Text style={styles.addText}>＋</Text>
         </TouchableOpacity>

@@ -1,34 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { getSingleProject } from '@/api/projectApi';
+import React from 'react';
+import { View, Text, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from '@/style/projectDetail';
+import { useProjectDetail } from '@/hooks/useProjectDetail';
 
 export default function ProjectDetailScreen({ route }) {
   const { id } = route.params;
 
-  const [project, setProject] = useState(null);
+  const { project, loading, formatDate } = useProjectDetail(id);
 
-  const fetchProject = async () => {
-    try {
-      const res = await getSingleProject(id);
-      setProject(res.data.project);
-      // console.log(project)
-    } catch (error) {
-      console.log('Project fetch error', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchProject();
-  }, []);
-
-  const formatDate = date => {
-    if (!date) return '';
-    return new Date(date).toLocaleDateString();
-  };
-
-  if (!project) {
+  if (loading) {
     return (
       <View style={styles.loader}>
         <ActivityIndicator size="large" color="#FF7A00" />

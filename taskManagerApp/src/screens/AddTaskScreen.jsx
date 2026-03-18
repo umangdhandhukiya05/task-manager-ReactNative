@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -10,72 +10,37 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
-import { useForm } from 'react-hook-form';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Calendar } from 'react-native-calendars';
-import { allUsers } from '@/api/userApi';
-import { addTask } from '@/api/taskApi';
+
 import { styles } from '@/style/addTaskForm';
-import Toast from 'react-native-toast-message';
-import { DropDownOption, ValidationRules } from '@/constants/formConstants';
+import { ValidationRules } from '@/constants/formConstants';
 import FormInput from '@/components/FormInput';
 import FormSelect from '@/components/DropDown';
+import { useAddTask } from '@/hooks/useAddTask';
 
-export default function AddTaskScreen({ navigation, route }) {
+export default function AddTaskScreen({ route }) {
+  const { projectId } = route.params;
+
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm();
+    errors,
+    isSubmitting,
 
-  const [calendarVisible, setCalendarVisible] = useState(false);
-  const [date, setDate] = useState(null);
+    calendarVisible,
+    setCalendarVisible,
 
-  const [users, setUsers] = useState([]);
+    date,
+    setDate,
+    today,
 
-  const today = new Date().toISOString().split('T')[0];
+    users,
+    statusData,
+    priorityData,
 
-  const { projectId } = route.params;
-
-  const statusData = DropDownOption.statusDropDown;
-  const priorityData = DropDownOption.priorityDropDown;
-
-  const getUsers = async () => {
-    try {
-      const res = await allUsers();
-      //   console.log(res?.data?.users);
-
-      const formattedUsers = res?.data?.users?.map(user => ({
-        label: user.name,
-        value: user._id,
-      }));
-
-      setUsers(formattedUsers);
-    } catch (error) {
-      console.log('User fetch error:', error);
-    }
-  };
-
-  useEffect(() => {
-    getUsers();
-  }, []);
-
-  const onSubmit = async data => {
-    try {
-      const taskDetail = {
-        ...data,
-        dueDate: date,
-      };
-      const result = await addTask(projectId, taskDetail);
-      navigation.goBack();
-      Toast.show({
-        type: 'success',
-        text1: result?.data?.message,
-      });
-    } catch (error) {
-      console.log('Create task error:', error);
-    }
-  };
+    onSubmit,
+  } = useAddTask(projectId);
 
   return (
     <SafeAreaView edges={['bottom']} style={{ flex: 1 }}>
@@ -87,7 +52,6 @@ export default function AddTaskScreen({ navigation, route }) {
           <Text style={styles.title}>Add New Task</Text>
 
           <Text style={styles.label}>Title</Text>
-
           <FormInput
             control={control}
             name="title"
@@ -98,7 +62,6 @@ export default function AddTaskScreen({ navigation, route }) {
           />
 
           <Text style={styles.label}>Description</Text>
-
           <FormInput
             control={control}
             name="description"
@@ -110,7 +73,6 @@ export default function AddTaskScreen({ navigation, route }) {
           />
 
           <Text style={styles.label}>Assign To</Text>
-
           <FormSelect
             control={control}
             name="assignedToUser"
@@ -122,7 +84,6 @@ export default function AddTaskScreen({ navigation, route }) {
           />
 
           <Text style={styles.label}>Status</Text>
-
           <FormSelect
             control={control}
             name="status"
@@ -134,7 +95,6 @@ export default function AddTaskScreen({ navigation, route }) {
           />
 
           <Text style={styles.label}>Priority</Text>
-
           <FormSelect
             control={control}
             name="priority"
@@ -146,14 +106,11 @@ export default function AddTaskScreen({ navigation, route }) {
           />
 
           <Text style={styles.label}>Due Date</Text>
-
           <TouchableOpacity
             style={[styles.dateBtn, !date && styles.errorInput]}
             onPress={() => setCalendarVisible(true)}
           >
-            <Text style={styles.dateText}>
-              {date ? date : 'Select Due Date'}
-            </Text>
+            <Text style={styles.dateText}>{date || 'Select Due Date'}</Text>
           </TouchableOpacity>
 
           <Modal visible={calendarVisible} transparent animationType="slide">
@@ -190,11 +147,7 @@ export default function AddTaskScreen({ navigation, route }) {
           >
             {isSubmitting ? (
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <ActivityIndicator
-                  size="small"
-                  color="#fff"
-                  style={{ marginLeft: 8 }}
-                />
+                <ActivityIndicator size="small" color="#fff" />
                 <Text style={styles.buttonText}>Task Assigning...</Text>
               </View>
             ) : (

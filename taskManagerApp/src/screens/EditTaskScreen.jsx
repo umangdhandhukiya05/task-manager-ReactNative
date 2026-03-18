@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -7,79 +7,40 @@ import {
   Platform,
   ScrollView,
   Modal,
-  Alert,
   ActivityIndicator,
 } from 'react-native';
 
-import { useForm } from 'react-hook-form';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Calendar } from 'react-native-calendars';
-import { allUsers } from '@/api/userApi';
-import { updateTask } from '@/api/taskApi';
+
 import { styles } from '@/style/addTaskForm';
-import { DropDownOption, ValidationRules } from '@/constants/formConstants';
+import { ValidationRules } from '@/constants/formConstants';
 import FormInput from '@/components/FormInput';
 import FormSelect from '@/components/DropDown';
+import { useEditTask } from '@/hooks/useEditTask';
 
-export default function EditTaskScreen({ route, navigation }) {
+export default function EditTaskScreen({ route }) {
   const { task } = route.params;
 
   const {
     control,
     handleSubmit,
-    setValue,
-    formState: { errors, isSubmitting },
-  } = useForm();
+    errors,
+    isSubmitting,
 
-  const [calendarVisible, setCalendarVisible] = useState(false);
-  const [date, setDate] = useState(task.dueDate);
-  const [users, setUsers] = useState([]);
+    calendarVisible,
+    setCalendarVisible,
 
-  const today = new Date().toISOString().split('T')[0];
+    date,
+    setDate,
+    today,
 
-  const statusData = DropDownOption.statusDropDown;
-  const priorityData = DropDownOption.priorityDropDown;
+    users,
+    statusData,
+    priorityData,
 
-  const getUsers = async () => {
-    try {
-      const res = await allUsers();
-
-      const formattedUsers = res?.data?.users?.map(user => ({
-        label: user.name,
-        value: user._id,
-      }));
-
-      setUsers(formattedUsers);
-    } catch (error) {
-      console.log('User fetch error:', error);
-    }
-  };
-
-  useEffect(() => {
-    getUsers();
-    setValue('title', task.title);
-    setValue('description', task.description);
-    setValue('assignedToUser', task.assignedToUser?._id);
-    setValue('status', task.status);
-    setValue('priority', task.priority);
-  }, []);
-
-  const onSubmit = async data => {
-    try {
-      const updatedTask = {
-        ...data,
-        dueDate: date,
-      };
-
-      await updateTask(task._id, updatedTask);
-
-      Alert.alert('Success', 'Task Updated');
-
-      navigation.goBack();
-    } catch (error) {
-      console.log('Update task error:', error);
-    }
-  };
+    onSubmit,
+  } = useEditTask(task);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -91,7 +52,6 @@ export default function EditTaskScreen({ route, navigation }) {
           <Text style={styles.title}>Edit Task</Text>
 
           <Text style={styles.label}>Title</Text>
-
           <FormInput
             control={control}
             name="title"
@@ -102,7 +62,6 @@ export default function EditTaskScreen({ route, navigation }) {
           />
 
           <Text style={styles.label}>Description</Text>
-
           <FormInput
             control={control}
             name="description"
@@ -114,7 +73,6 @@ export default function EditTaskScreen({ route, navigation }) {
           />
 
           <Text style={styles.label}>Assign To</Text>
-
           <FormSelect
             control={control}
             name="assignedToUser"
@@ -126,7 +84,6 @@ export default function EditTaskScreen({ route, navigation }) {
           />
 
           <Text style={styles.label}>Status</Text>
-
           <FormSelect
             control={control}
             name="status"
@@ -138,7 +95,6 @@ export default function EditTaskScreen({ route, navigation }) {
           />
 
           <Text style={styles.label}>Priority</Text>
-
           <FormSelect
             control={control}
             name="priority"
@@ -150,7 +106,6 @@ export default function EditTaskScreen({ route, navigation }) {
           />
 
           <Text style={styles.label}>Due Date</Text>
-
           <TouchableOpacity
             style={styles.dateBtn}
             onPress={() => setCalendarVisible(true)}
@@ -189,11 +144,7 @@ export default function EditTaskScreen({ route, navigation }) {
           >
             {isSubmitting ? (
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <ActivityIndicator
-                  size="small"
-                  color="#fff"
-                  style={{ marginLeft: 8 }}
-                />
+                <ActivityIndicator size="small" color="#fff" />
                 <Text style={styles.buttonText}>Updating...</Text>
               </View>
             ) : (

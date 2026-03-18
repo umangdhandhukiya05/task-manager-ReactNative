@@ -9,15 +9,13 @@ import {
   StyleSheet,
 } from 'react-native';
 
-import { useForm } from 'react-hook-form';
-import { registerUser } from '@/api/userApi';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Toast from 'react-native-toast-message';
 import { commonStyles } from '@/theme/commonStyles';
 import { colors } from '@/theme/colors';
 import { spacing } from '@/theme/spacing';
 import FormInput from '@/components/FormInput';
 import { ValidationRules } from '@/constants/formConstants';
+import { useRegister } from '@/hooks/useRegister';
 
 const styles = StyleSheet.create({
   container: commonStyles.containerCentered,
@@ -34,29 +32,9 @@ const styles = StyleSheet.create({
   link: commonStyles.link,
 });
 
-export default function RegisterScreen({ navigation }) {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm();
-
-  const onSubmit = async data => {
-    try {
-      const response = await registerUser(data);
-
-      if (response) {
-        navigation.navigate('Login');
-      }
-      Toast.show({
-        type: 'success',
-        text1: 'Register successful',
-        text2: response?.data?.message,
-      });
-    } catch (error) {
-      console.log('Registration failed', error);
-    }
-  };
+export default function RegisterScreen() {
+  const { control, handleSubmit, errors, isSubmitting, onSubmit, navigation } =
+    useRegister();
 
   return (
     <SafeAreaView style={styles.container}>
