@@ -1,10 +1,13 @@
 import { StyleSheet } from "react-native";
+import { colors } from "@/theme/colors";
+import { typography } from "@/theme/typography";
+import { spacing } from "@/theme/spacing";
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 12,
-    backgroundColor: '#F5F5F5',
+    padding: spacing.xxl,
+    backgroundColor: colors.background,
   },
 
   loader: {
@@ -15,43 +18,46 @@ export const styles = StyleSheet.create({
 
   searchRow: {
     flexDirection: 'row',
-    marginBottom: 10,
+    marginBottom: spacing.lg,
   },
 
   search: {
     flex: 1,
-    backgroundColor: '#FFF',
-    padding: 10,
+    backgroundColor: colors.surface,
+    padding: spacing.xxl,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#DDD',
-    marginRight: 8,
+    borderColor: colors.border,
+    marginRight: spacing.lg,
+    fontSize: typography.sizes.base,
+    color: colors.text.primary,
   },
 
   filterRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 12,
+    marginBottom: spacing.xxl,
   },
 
   dropdown: {
     width: '48%',
     height: 42,
-    backgroundColor: '#FFF',
+    backgroundColor: colors.surface,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#DDD',
-    paddingHorizontal: 10,
+    borderColor: colors.border,
+    paddingHorizontal: spacing.lg,
   },
 
   emptyText: {
     textAlign: 'center',
     marginTop: 40,
-    color: '#888',
+    color: colors.text.light,
+    fontSize: typography.sizes.base,
   },
 
   addButton: {
-    backgroundColor: '#FF7A00',
+    backgroundColor: colors.primary,
     height: 42,
     width: 42,
     borderRadius: 10,
@@ -60,8 +66,8 @@ export const styles = StyleSheet.create({
   },
 
   addText: {
-    color: '#FFF',
-    fontSize: 22,
-    fontWeight: '600',
+    color: colors.white,
+    fontSize: typography.sizes.xl,
+    fontWeight: typography.weights.semibold,
   },
 });

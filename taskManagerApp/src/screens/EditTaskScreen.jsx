@@ -2,23 +2,24 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
-  TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   Modal,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 
-import { useForm, Controller } from 'react-hook-form';
-import { Dropdown } from 'react-native-element-dropdown';
+import { useForm } from 'react-hook-form';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Calendar } from 'react-native-calendars';
 import { allUsers } from '@/api/userApi';
 import { updateTask } from '@/api/taskApi';
 import { styles } from '@/style/addTaskForm';
+import { DropDownOption, ValidationRules } from '@/constants/formConstants';
+import FormInput from '@/components/FormInput';
+import FormSelect from '@/components/DropDown';
 
 export default function EditTaskScreen({ route, navigation }) {
   const { task } = route.params;
@@ -27,7 +28,7 @@ export default function EditTaskScreen({ route, navigation }) {
     control,
     handleSubmit,
     setValue,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm();
 
   const [calendarVisible, setCalendarVisible] = useState(false);
@@ -36,17 +37,8 @@ export default function EditTaskScreen({ route, navigation }) {
 
   const today = new Date().toISOString().split('T')[0];
 
-  const statusData = [
-    { label: 'Todo', value: 'todo' },
-    { label: 'In Progress', value: 'inProgress' },
-    { label: 'Done', value: 'done' },
-  ];
-
-  const priorityData = [
-    { label: 'Low', value: 'Low' },
-    { label: 'Medium', value: 'Medium' },
-    { label: 'High', value: 'High' },
-  ];
+  const statusData = DropDownOption.statusDropDown;
+  const priorityData = DropDownOption.priorityDropDown;
 
   const getUsers = async () => {
     try {
@@ -65,8 +57,6 @@ export default function EditTaskScreen({ route, navigation }) {
 
   useEffect(() => {
     getUsers();
-
-    // Prefill form values
     setValue('title', task.title);
     setValue('description', task.description);
     setValue('assignedToUser', task.assignedToUser?._id);
@@ -102,88 +92,61 @@ export default function EditTaskScreen({ route, navigation }) {
 
           <Text style={styles.label}>Title</Text>
 
-          <Controller
+          <FormInput
             control={control}
             name="title"
-            rules={{ required: 'Title required' }}
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                style={[styles.input, errors.title && styles.errorInput]}
-                value={value}
-                onChangeText={onChange}
-              />
-            )}
+            rules={ValidationRules.title}
+            placeholder="Enter task title"
+            errors={errors}
+            style={styles.input}
           />
 
           <Text style={styles.label}>Description</Text>
 
-          <Controller
+          <FormInput
             control={control}
             name="description"
-            rules={{ required: 'Description required' }}
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                multiline
-                style={[styles.input, { height: 100 }]}
-                value={value}
-                onChangeText={onChange}
-              />
-            )}
+            rules={ValidationRules.description}
+            placeholder="Enter description"
+            errors={errors}
+            style={[styles.input, { height: 100 }]}
+            multiline
           />
 
           <Text style={styles.label}>Assign To</Text>
 
-          <Controller
+          <FormSelect
             control={control}
             name="assignedToUser"
             rules={{ required: 'User required' }}
-            render={({ field: { onChange, value } }) => (
-              <Dropdown
-                style={styles.dropdown}
-                data={users}
-                labelField="label"
-                valueField="value"
-                value={value}
-                placeholder="Select user"
-                onChange={item => onChange(item.value)}
-              />
-            )}
+            options={users}
+            errors={errors}
+            placeholder="Select user"
+            style={styles.dropdown}
           />
 
           <Text style={styles.label}>Status</Text>
 
-          <Controller
+          <FormSelect
             control={control}
             name="status"
-            render={({ field: { onChange, value } }) => (
-              <Dropdown
-                style={styles.dropdown}
-                data={statusData}
-                labelField="label"
-                valueField="value"
-                value={value}
-                placeholder="Select status"
-                onChange={item => onChange(item.value)}
-              />
-            )}
+            rules={ValidationRules.status}
+            options={statusData}
+            errors={errors}
+            placeholder="Select status"
+            style={styles.dropdown}
           />
 
           <Text style={styles.label}>Priority</Text>
 
-          <Controller
+          <FormSelect
             control={control}
             name="priority"
-            render={({ field: { onChange, value } }) => (
-              <Dropdown
-                style={styles.dropdown}
-                data={priorityData}
-                labelField="label"
-                valueField="value"
-                value={value}
-                placeholder="Select priority"
-                onChange={item => onChange(item.value)}
-              />
-            )}
+            rules={ValidationRules.priority}
+            options={priorityData}
+            errors={errors}
+            placeholder="Select priority"
+            style={styles.dropdown}
           />
 
           <Text style={styles.label}>Due Date</Text>
@@ -222,8 +185,20 @@ export default function EditTaskScreen({ route, navigation }) {
           <TouchableOpacity
             style={styles.button}
             onPress={handleSubmit(onSubmit)}
+            disabled={isSubmitting}
           >
-            <Text style={styles.buttonText}>Update Task</Text>
+            {isSubmitting ? (
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <ActivityIndicator
+                  size="small"
+                  color="#fff"
+                  style={{ marginLeft: 8 }}
+                />
+                <Text style={styles.buttonText}>Updating...</Text>
+              </View>
+            ) : (
+              <Text style={styles.buttonText}>Update Task</Text>
+            )}
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>

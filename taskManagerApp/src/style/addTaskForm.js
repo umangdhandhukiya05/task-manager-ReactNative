@@ -1,89 +1,98 @@
 import { StyleSheet } from "react-native";
+import { colors } from "@/theme/colors";
+import { typography } from "@/theme/typography";
+import { spacing } from "@/theme/spacing";
 
 export const styles = StyleSheet.create({
-  container: { padding: 20 },
+  container: { padding: spacing.largest },
 
   title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 20,
+    fontSize: typography.sizes.xl,
+    fontWeight: typography.weights.bold,
+    marginBottom: spacing.largest,
+    color: colors.text.primary,
   },
 
   label: {
-    fontSize: 14,
-    marginBottom: 6,
-    fontWeight: '600',
+    fontSize: typography.sizes.base,
+    marginBottom: spacing.md,
+    fontWeight: typography.weights.semibold,
+    color: colors.text.primary,
   },
 
   input: {
-    backgroundColor: '#FFF',
+    backgroundColor: colors.surface,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#DDD',
-    padding: 12,
-    marginBottom: 6,
+    borderColor: colors.border,
+    padding: spacing.xxl,
+    marginBottom: spacing.md,
+    color: colors.text.primary,
   },
 
   dropdown: {
     height: 50,
-    backgroundColor: '#FFF',
+    backgroundColor: colors.surface,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#DDD',
-    paddingHorizontal: 10,
-    marginBottom: 6,
+    borderColor: colors.border,
+    paddingHorizontal: spacing.lg,
+    marginBottom: spacing.md,
   },
 
   dateBtn: {
-    backgroundColor: '#FFF',
+    backgroundColor: colors.surface,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#DDD',
-    padding: 14,
-    marginBottom: 16,
+    borderColor: colors.border,
+    padding: spacing.xxxl,
+    marginBottom: spacing.huge,
   },
 
-  dateText: { fontSize: 14 },
+  dateText: { 
+    fontSize: typography.sizes.base,
+    color: colors.text.primary,
+  },
 
   button: {
-    backgroundColor: '#FF7A00',
-    padding: 16,
+    backgroundColor: colors.primary,
+    padding: spacing.huge,
     borderRadius: 10,
     alignItems: 'center',
   },
 
   buttonText: {
-    color: '#FFF',
-    fontWeight: 'bold',
-    fontSize: 16,
+    color: colors.white,
+    fontWeight: typography.weights.bold,
+    fontSize: typography.sizes.md,
   },
 
   errorText: {
-    color: 'red',
-    fontSize: 12,
-    marginBottom: 10,
+    color: colors.error,
+    fontSize: typography.sizes.xs,
+    marginBottom: spacing.lg,
   },
 
-  errorInput: { borderColor: 'red' },
+  errorInput: { borderColor: colors.error },
 
   modalContainer: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.4)',
     justifyContent: 'center',
-    padding: 20,
+    padding: spacing.largest,
   },
 
   calendarBox: {
-    backgroundColor: '#FFF',
+    backgroundColor: colors.surface,
     borderRadius: 12,
-    padding: 10,
+    padding: spacing.lg,
   },
 
   closeBtn: {
-    backgroundColor: '#FF7A00',
-    padding: 12,
+    backgroundColor: colors.primary,
+    padding: spacing.xxl,
     borderRadius: 8,
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: spacing.lg,
   },
 });

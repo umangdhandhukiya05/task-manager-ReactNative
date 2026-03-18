@@ -1,11 +1,14 @@
 import { StyleSheet } from "react-native";
+import { colors } from "@/theme/colors";
+import { typography } from "@/theme/typography";
+import { spacing } from "@/theme/spacing";
 
 export const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#FFF',
-    padding: 16,
+    backgroundColor: colors.surface,
+    padding: spacing.huge,
     borderRadius: 14,
-    marginBottom: 14,
+    marginBottom: spacing.xxxl,
     elevation: 3,
   },
 
@@ -16,64 +19,64 @@ export const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#333',
+    fontSize: typography.sizes.md,
+    fontWeight: typography.weights.bold,
+    color: colors.text.primary,
     maxWidth:"80%",
   },
 
   editBtn: {
-    backgroundColor: '#FF7A00',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    backgroundColor: colors.primary,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
     borderRadius: 6,
   },
 
   editText: {
-    color: '#FFF',
-    fontSize: 12,
-    fontWeight: '600',
+    color: colors.white,
+    fontSize: typography.sizes.xs,
+    fontWeight: typography.weights.semibold,
   },
 
   description: {
-    marginTop: 6,
-    color: '#555',
-    fontSize: 14,
+    marginTop: spacing.md,
+    color: colors.text.secondary,
+    fontSize: typography.sizes.base,
     maxWidth:"80%"
   },
 
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: spacing.lg,
   },
 
   chip: {
-    paddingVertical: 4,
-    paddingHorizontal: 10,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.lg,
     borderRadius: 20,
-    marginRight: 8,
+    marginRight: spacing.lg,
   },
 
   chipText: {
-    color: '#FFF',
-    fontSize: 12,
-    fontWeight: '600',
+    color: colors.white,
+    fontSize: typography.sizes.xs,
+    fontWeight: typography.weights.semibold,
   },
 
   dropdown: {
-    marginTop: 10,
+    marginTop: spacing.lg,
     width: 160,
     height: 36,
     borderWidth: 1,
-    borderColor: '#DDD',
+    borderColor: colors.border,
     borderRadius: 8,
-    paddingHorizontal: 8,
+    paddingHorizontal: spacing.lg,
   },
 
   dueDate: {
-    marginTop: 10,
-    fontSize: 12,
-    color: '#888',
+    marginTop: spacing.lg,
+    fontSize: typography.sizes.xs,
+    color: colors.text.light,
   },
 });

@@ -1,10 +1,13 @@
 import { StyleSheet } from "react-native";
+import { colors } from "@/theme/colors";
+import { typography } from "@/theme/typography";
+import { spacing } from "@/theme/spacing";
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F6FA',
-    padding: 20,
+    backgroundColor: colors.background,
+    padding: spacing.largest,
   },
 
   loader: {
@@ -14,44 +17,45 @@ export const styles = StyleSheet.create({
   },
 
   card: {
-    backgroundColor: '#FFF',
+    backgroundColor: colors.surface,
     borderRadius: 16,
-    padding: 20,
+    padding: spacing.largest,
     elevation: 4,
-    shadowColor: '#000',
+    shadowColor: colors.black,
     shadowOpacity: 0.08,
     shadowRadius: 6,
   },
 
   title: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: '#222',
-    marginBottom: 20,
+    fontSize: typography.sizes.xl,
+    fontWeight: typography.weights.bold,
+    color: colors.text.primary,
+    marginBottom: spacing.largest,
   },
 
   section: {
-    marginBottom: 16,
+    marginBottom: spacing.huge,
   },
 
   label: {
-    fontSize: 12,
-    color: '#888',
-    marginBottom: 4,
+    fontSize: typography.sizes.xs,
+    color: colors.text.light,
+    marginBottom: spacing.sm,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
+    fontWeight: typography.weights.semibold,
   },
 
   value: {
-    fontSize: 15,
-    color: '#333',
-    fontWeight: '500',
+    fontSize: typography.sizes.base,
+    color: colors.text.primary,
+    fontWeight: typography.weights.medium,
   },
 
   divider: {
     height: 1,
-    backgroundColor: '#EEE',
-    marginVertical: 12,
+    backgroundColor: colors.border,
+    marginVertical: spacing.xxl,
   },
 
   row: {

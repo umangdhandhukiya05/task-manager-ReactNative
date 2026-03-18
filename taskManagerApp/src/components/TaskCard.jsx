@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { updateTaskStatus } from '@/api/taskApi';
 import { Icon } from '@rneui/themed';
 import { styles } from '@/style/TaskCard';
+import { DropDownOption } from '@/constants/formConstants';
 
 function TaskCard({ task }) {
   const navigation = useNavigation();
@@ -30,12 +31,8 @@ function TaskCard({ task }) {
     done: '#10B981',
   };
 
-  //deopdown value for status change
-  const statusOptions = [
-    { label: 'Todo', value: 'todo' },
-    { label: 'In Progress', value: 'inProgress' },
-    { label: 'Done', value: 'done' },
-  ];
+  //dropdown value for status change
+  const statusOptions = DropDownOption.statusDropDown;
 
   //verify current user is task creator or task assignedToUser
   const isCreator =

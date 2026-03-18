@@ -1,31 +1,34 @@
 import { StyleSheet } from 'react-native';
+import { colors } from '@/theme/colors';
+import { typography } from '@/theme/typography';
+import { spacing } from '@/theme/spacing';
 
 export const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#FFF',
-    padding: 16,
+    backgroundColor: colors.surface,
+    padding: spacing.huge,
     borderRadius: 14,
-    marginBottom: 16,
+    marginBottom: spacing.huge,
     elevation: 3,
   },
 
   title: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#333',
+    fontSize: typography.sizes.lg,
+    fontWeight: typography.weights.bold,
+    color: colors.text.primary,
     maxWidth: '80%',
   },
 
   creator: {
-    fontSize: 12,
-    color: '#666',
-    marginTop: 2,
-    marginBottom: 4,
+    fontSize: typography.sizes.xs,
+    color: colors.text.tertiary,
+    marginTop: spacing.md,
+    marginBottom: spacing.sm,
   },
 
   description: {
-    marginTop: 6,
-    color: '#666',
+    marginTop: spacing.md,
+    color: colors.text.tertiary,
     maxWidth: '80%',
   },
 
@@ -33,24 +36,25 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 14,
+    marginTop: spacing.xxxl,
   },
 
   taskBtn: {
-    backgroundColor: '#ECFDF5',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
+    backgroundColor: colors.secondaryLight,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.lg,
     borderRadius: 8,
-    marginRight: 10,
+    marginRight: spacing.lg,
   },
 
   taskText: {
-    color: '#10B981',
-    fontWeight: '600',
-    fontSize: 13,
+    color: colors.secondary,
+    fontWeight: typography.weights.semibold,
+    fontSize: typography.sizes.sm,
   },
+
   btn: {
     flexDirection: 'row',
-    gap: 8,
+    gap: spacing.lg,
   },
 });

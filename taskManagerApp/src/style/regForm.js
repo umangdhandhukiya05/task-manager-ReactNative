@@ -1,58 +1,61 @@
 import { StyleSheet } from "react-native";
+import { colors } from "@/theme/colors";
+import { typography } from "@/theme/typography";
+import { spacing } from "@/theme/spacing";
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    padding: 25,
-    backgroundColor: '#F5F5F5',
+    padding: spacing.largest,
+    backgroundColor: colors.background,
   },
 
   title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 30,
-    color: '#333',
+    fontSize: typography.sizes.xxxl,
+    fontWeight: typography.weights.bold,
+    marginBottom: spacing.max,
+    color: colors.text.primary,
   },
 
   input: {
     height: 50,
     borderWidth: 1,
-    borderColor: '#DDD',
+    borderColor: colors.border,
     borderRadius: 10,
-    paddingHorizontal: 15,
-    marginBottom: 10,
-    backgroundColor: '#FFF',
+    paddingHorizontal: spacing.xl,
+    marginBottom: spacing.lg,
+    backgroundColor: colors.surface,
   },
 
   error: {
-    color: '#D9534F',
-    marginBottom: 10,
+    color: colors.error,
+    marginBottom: spacing.lg,
   },
 
   button: {
     height: 50,
-    backgroundColor: '#FF7A00',
+    backgroundColor: colors.primary,
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: spacing.lg,
   },
 
   buttonText: {
-    color: '#FFF',
-    fontWeight: '600',
-    fontSize: 16,
+    color: colors.white,
+    fontWeight: typography.weights.semibold,
+    fontSize: typography.sizes.md,
   },
 
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 20,
+    marginTop: spacing.largest,
   },
 
   link: {
-    color: '#FF7A00',
-    fontWeight: '600',
+    color: colors.primary,
+    fontWeight: typography.weights.semibold,
   },
 });

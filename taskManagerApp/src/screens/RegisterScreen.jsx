@@ -2,24 +2,43 @@ import React from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
-  StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
+  StyleSheet,
 } from 'react-native';
 
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { registerUser } from '@/api/userApi';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
-import { styles } from '@/style/regForm';
+import { commonStyles } from '@/theme/commonStyles';
+import { colors } from '@/theme/colors';
+import { spacing } from '@/theme/spacing';
+import FormInput from '@/components/FormInput';
+import { ValidationRules } from '@/constants/formConstants';
+
+const styles = StyleSheet.create({
+  container: commonStyles.containerCentered,
+  title: commonStyles.titleLarge,
+  input: commonStyles.input,
+  error: commonStyles.error,
+  button: commonStyles.button,
+  buttonText: commonStyles.buttonText,
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: spacing.largest,
+  },
+  link: commonStyles.link,
+});
 
 export default function RegisterScreen({ navigation }) {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm();
 
   const onSubmit = async data => {
@@ -47,83 +66,52 @@ export default function RegisterScreen({ navigation }) {
         <View>
           <Text style={styles.title}>Register Form</Text>
 
-          <Controller
+          <FormInput
             control={control}
             name="name"
-            rules={{ required: 'Name is required' }}
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                placeholder="Enter full name"
-                placeholderTextColor="#888"
-                value={value}
-                onChangeText={onChange}
-                style={styles.input}
-              />
-            )}
+            rules={ValidationRules.name}
+            placeholder="Enter full name"
+            errors={errors}
+            style={styles.input}
           />
 
-          {errors.name && (
-            <Text style={styles.error}>{errors.name.message}</Text>
-          )}
-
-          <Controller
+          <FormInput
             control={control}
             name="email"
-            rules={{
-              required: 'Email is required',
-              pattern: {
-                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                message: 'Invalid email address',
-              },
-            }}
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                placeholder="Enter email"
-                placeholderTextColor="#888"
-                keyboardType="email-address"
-                value={value}
-                onChangeText={onChange}
-                style={styles.input}
-              />
-            )}
+            rules={ValidationRules.email}
+            placeholder="Enter email"
+            errors={errors}
+            keyboardType="email-address"
+            style={styles.input}
           />
 
-          {errors.email && (
-            <Text style={styles.error}>{errors.email.message}</Text>
-          )}
-
-          <Controller
+          <FormInput
             control={control}
             name="password"
-            rules={{
-              required: 'Password required',
-              pattern: {
-                value: strongPasswordRegex,
-                message:
-                  'Min 8 character, 1 A-Z, 1 a-z, 1 number, 1 special character',
-              },
-            }}
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                placeholder="Enter password"
-                secureTextEntry
-                placeholderTextColor="#888"
-                value={value}
-                onChangeText={onChange}
-                style={styles.input}
-              />
-            )}
+            rules={ValidationRules.password}
+            placeholder="Enter password"
+            errors={errors}
+            secureTextEntry
+            style={styles.input}
           />
 
-          {errors.password && (
-            <Text style={styles.error}>{errors.password.message}</Text>
-          )}
-
           <TouchableOpacity
-            style={styles.button}
+            style={[styles.button, isSubmitting && commonStyles.buttonDisabled]}
             onPress={handleSubmit(onSubmit)}
+            disabled={isSubmitting}
           >
-            <Text style={styles.buttonText}>Register</Text>
+            {isSubmitting ? (
+              <View style={commonStyles.rowCenter}>
+                <ActivityIndicator
+                  size="small"
+                  color={colors.white}
+                  style={{ marginRight: spacing.lg }}
+                />
+                <Text style={styles.buttonText}>Creating user...</Text>
+              </View>
+            ) : (
+              <Text style={styles.buttonText}>Register</Text>
+            )}
           </TouchableOpacity>
 
           <View style={styles.footer}>

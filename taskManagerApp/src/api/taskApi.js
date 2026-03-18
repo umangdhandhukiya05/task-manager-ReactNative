@@ -14,7 +14,13 @@ export const getProjectTasks = (projectId, filters = {}) => {
     ...filters,
   }).toString();
 
-  return api.get(`/api/tasks/alltask?${query}`);
+  return api.get(`/api/tasks/alltask?${query}`, {
+    headers: {
+      'Cache-Control': 'no-cache',
+      Pragma: 'no-cache',
+      Expires: '0',
+    },
+  });
 };
 
 //update task by creator

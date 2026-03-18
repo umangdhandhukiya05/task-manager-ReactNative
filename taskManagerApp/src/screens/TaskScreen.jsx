@@ -1,6 +1,6 @@
 import { getProjectTasks } from '@/api/taskApi';
 import TaskCard from '@/components/TaskCard';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   FlatList,
@@ -14,7 +14,9 @@ import {
 
 import { Dropdown } from 'react-native-element-dropdown';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useFocusEffect } from '@react-navigation/native';
 import { styles } from '@/style/taskScreen';
+import { DropDownOption } from '@/constants/formConstants';
 
 export default function TaskScreen({ route, navigation }) {
   const { id } = route.params;
@@ -29,16 +31,12 @@ export default function TaskScreen({ route, navigation }) {
 
   const statusData = [
     { label: 'All Status', value: '' },
-    { label: 'Todo', value: 'todo' },
-    { label: 'In Progress', value: 'inProgress' },
-    { label: 'Done', value: 'done' },
+    ...DropDownOption.statusDropDown,
   ];
 
   const priorityData = [
     { label: 'All Priority', value: '' },
-    { label: 'Low', value: 'Low' },
-    { label: 'Medium', value: 'Medium' },
-    { label: 'High', value: 'High' },
+    ...DropDownOption.priorityDropDown,
   ];
 
   const fetchTasks = async () => {
@@ -55,13 +53,15 @@ export default function TaskScreen({ route, navigation }) {
     }
   };
 
-  useEffect(() => {
-    fetchTasks();
-  }, [search, status, priority]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchTasks();
+    }, [search, status, priority, id]),
+  );
 
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
     setRefreshing(true);
-    fetchTasks();
+    await fetchTasks();
   };
 
   if (loading) {

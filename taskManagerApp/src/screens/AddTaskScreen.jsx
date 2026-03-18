@@ -2,30 +2,30 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
-  TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   Modal,
-  Alert,
+  ActivityIndicator,
 } from 'react-native';
 
-import { useForm, Controller } from 'react-hook-form';
-import { Dropdown } from 'react-native-element-dropdown';
+import { useForm } from 'react-hook-form';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Calendar } from 'react-native-calendars';
 import { allUsers } from '@/api/userApi';
 import { addTask } from '@/api/taskApi';
 import { styles } from '@/style/addTaskForm';
 import Toast from 'react-native-toast-message';
+import { DropDownOption, ValidationRules } from '@/constants/formConstants';
+import FormInput from '@/components/FormInput';
+import FormSelect from '@/components/DropDown';
 
 export default function AddTaskScreen({ navigation, route }) {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm();
 
   const [calendarVisible, setCalendarVisible] = useState(false);
@@ -37,17 +37,8 @@ export default function AddTaskScreen({ navigation, route }) {
 
   const { projectId } = route.params;
 
-  const statusData = [
-    { label: 'Todo', value: 'todo' },
-    { label: 'In Progress', value: 'inProgress' },
-    { label: 'Done', value: 'done' },
-  ];
-
-  const priorityData = [
-    { label: 'Low', value: 'Low' },
-    { label: 'Medium', value: 'Medium' },
-    { label: 'High', value: 'High' },
-  ];
+  const statusData = DropDownOption.statusDropDown;
+  const priorityData = DropDownOption.priorityDropDown;
 
   const getUsers = async () => {
     try {
@@ -87,7 +78,7 @@ export default function AddTaskScreen({ navigation, route }) {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView edges={['bottom']} style={{ flex: 1 }}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
@@ -97,126 +88,62 @@ export default function AddTaskScreen({ navigation, route }) {
 
           <Text style={styles.label}>Title</Text>
 
-          <Controller
+          <FormInput
             control={control}
             name="title"
-            rules={{
-              required: 'Title is required',
-              minLength: { value: 3, message: 'Minimum 3 characters' },
-            }}
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                placeholder="Enter task title"
-                style={[styles.input, errors.title && styles.errorInput]}
-                value={value}
-                onChangeText={onChange}
-              />
-            )}
+            rules={ValidationRules.title}
+            placeholder="Enter task title"
+            errors={errors}
+            style={styles.input}
           />
-
-          {errors.title && (
-            <Text style={styles.errorText}>{errors.title.message}</Text>
-          )}
 
           <Text style={styles.label}>Description</Text>
 
-          <Controller
+          <FormInput
             control={control}
             name="description"
-            rules={{
-              required: 'Description is required',
-              minLength: { value: 10, message: 'Minimum 10 characters' },
-            }}
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                placeholder="Enter description"
-                multiline
-                style={[
-                  styles.input,
-                  { height: 100 },
-                  errors.description && styles.errorInput,
-                ]}
-                value={value}
-                onChangeText={onChange}
-              />
-            )}
+            rules={ValidationRules.description}
+            placeholder="Enter description"
+            errors={errors}
+            style={[styles.input, { height: 100 }]}
+            multiline
           />
-
-          {errors.description && (
-            <Text style={styles.errorText}>{errors.description.message}</Text>
-          )}
 
           <Text style={styles.label}>Assign To</Text>
 
-          <Controller
+          <FormSelect
             control={control}
             name="assignedToUser"
             rules={{ required: 'User is required' }}
-            render={({ field: { onChange, value } }) => (
-              <Dropdown
-                style={[
-                  styles.dropdown,
-                  errors.assignedTo && styles.errorInput,
-                ]}
-                data={users}
-                labelField="label"
-                valueField="value"
-                placeholder="Select User"
-                value={value}
-                onChange={item => onChange(item.value)}
-              />
-            )}
+            options={users}
+            errors={errors}
+            placeholder="Select User"
+            style={styles.dropdown}
           />
-
-          {errors.assignedTo && (
-            <Text style={styles.errorText}>{errors.assignedTo.message}</Text>
-          )}
 
           <Text style={styles.label}>Status</Text>
 
-          <Controller
+          <FormSelect
             control={control}
             name="status"
-            rules={{ required: 'Status is required' }}
-            render={({ field: { onChange, value } }) => (
-              <Dropdown
-                style={[styles.dropdown, errors.status && styles.errorInput]}
-                data={statusData}
-                labelField="label"
-                valueField="value"
-                placeholder="Select status"
-                value={value}
-                onChange={item => onChange(item.value)}
-              />
-            )}
+            rules={ValidationRules.status}
+            options={statusData}
+            errors={errors}
+            placeholder="Select status"
+            style={styles.dropdown}
           />
-
-          {errors.status && (
-            <Text style={styles.errorText}>{errors.status.message}</Text>
-          )}
 
           <Text style={styles.label}>Priority</Text>
 
-          <Controller
+          <FormSelect
             control={control}
             name="priority"
-            rules={{ required: 'Priority is required' }}
-            render={({ field: { onChange, value } }) => (
-              <Dropdown
-                style={[styles.dropdown, errors.priority && styles.errorInput]}
-                data={priorityData}
-                labelField="label"
-                valueField="value"
-                placeholder="Select priority"
-                value={value}
-                onChange={item => onChange(item.value)}
-              />
-            )}
+            rules={ValidationRules.priority}
+            options={priorityData}
+            errors={errors}
+            placeholder="Select priority"
+            style={styles.dropdown}
           />
-
-          {errors.priority && (
-            <Text style={styles.errorText}>{errors.priority.message}</Text>
-          )}
 
           <Text style={styles.label}>Due Date</Text>
 
@@ -259,8 +186,20 @@ export default function AddTaskScreen({ navigation, route }) {
           <TouchableOpacity
             style={styles.button}
             onPress={handleSubmit(onSubmit)}
+            disabled={isSubmitting}
           >
-            <Text style={styles.buttonText}>Create Task</Text>
+            {isSubmitting ? (
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <ActivityIndicator
+                  size="small"
+                  color="#fff"
+                  style={{ marginLeft: 8 }}
+                />
+                <Text style={styles.buttonText}>Task Assigning...</Text>
+              </View>
+            ) : (
+              <Text style={styles.buttonText}>Add Task</Text>
+            )}
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>

@@ -1,26 +1,29 @@
 import { StyleSheet } from 'react-native';
+import { colors } from '@/theme/colors';
+import { typography } from '@/theme/typography';
+import { spacing } from '@/theme/spacing';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#F5F5F5',
+    padding: spacing.largest,
+    backgroundColor: colors.background,
   },
 
   title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#333',
+    fontSize: typography.sizes.xxxl,
+    fontWeight: typography.weights.bold,
+    marginBottom: spacing.largest,
+    color: colors.text.primary,
   },
 
   input: {
-    backgroundColor: '#FFF',
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#DDD',
+    borderColor: colors.border,
     borderRadius: 10,
-    padding: 12,
-    marginBottom: 10,
+    padding: spacing.xxl,
+    marginBottom: spacing.lg,
   },
 
   textArea: {
@@ -29,21 +32,21 @@ export const styles = StyleSheet.create({
   },
 
   error: {
-    color: 'red',
-    marginBottom: 10,
+    color: colors.error,
+    marginBottom: spacing.lg,
   },
 
   button: {
-    backgroundColor: '#FF7A00',
-    padding: 14,
+    backgroundColor: colors.primary,
+    padding: spacing.xxxl,
     borderRadius: 10,
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: spacing.lg,
   },
 
   buttonText: {
-    color: '#FFF',
-    fontWeight: '600',
-    fontSize: 16,
+    color: colors.white,
+    fontWeight: typography.weights.semibold,
+    fontSize: typography.sizes.md,
   },
 });

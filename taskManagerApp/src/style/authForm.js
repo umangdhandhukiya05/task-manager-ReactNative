@@ -1,48 +1,51 @@
 import { StyleSheet } from "react-native";
+import { colors } from "@/theme/colors";
+import { typography } from "@/theme/typography";
+import { spacing } from "@/theme/spacing";
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    padding: 25,
-    backgroundColor: '#F5F5F5',
+    padding: spacing.largest,
+    backgroundColor: colors.background,
   },
 
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 10,
+    fontSize: typography.sizes.xxxxl,
+    fontWeight: typography.weights.bold,
+    color: colors.text.primary,
+    marginBottom: spacing.lg,
   },
 
   input: {
     height: 50,
     borderWidth: 1,
-    borderColor: '#DDD',
+    borderColor: colors.border,
     borderRadius: 10,
-    paddingHorizontal: 15,
-    marginBottom: 10,
-    backgroundColor: '#FFF',
+    paddingHorizontal: spacing.xl,
+    marginBottom: spacing.lg,
+    backgroundColor: colors.surface,
   },
 
   error: {
-    color: '#D9534F',
-    marginBottom: 10,
+    color: colors.error,
+    marginBottom: spacing.lg,
   },
 
   loginBtn: {
     height: 50,
-    backgroundColor: '#FF7A00',
+    backgroundColor: colors.primary,
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: spacing.lg,
   },
 
   loginText: {
-    color: '#FFF',
-    fontSize: 16,
-    fontWeight: '600',
+    color: colors.white,
+    fontSize: typography.sizes.md,
+    fontWeight: typography.weights.semibold,
   },
 
   registerContainer: {

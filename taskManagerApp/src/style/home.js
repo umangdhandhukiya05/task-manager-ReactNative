@@ -1,36 +1,40 @@
 import { StyleSheet } from "react-native";
+import { colors } from "@/theme/colors";
+import { typography } from "@/theme/typography";
+import { spacing } from "@/theme/spacing";
 
 export const styles = StyleSheet.create({
   headerText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    padding: 10,
-    backgroundColor: '#f8f8f8',
+    fontSize: typography.sizes.xl,
+    fontWeight: typography.weights.bold,
+    padding: spacing.lg,
+    backgroundColor: colors.lightGray,
   },
+  
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: '#F5F5F5',
+    padding: spacing.huge,
+    backgroundColor: colors.background,
   },
 
   topBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: spacing.xl,
   },
 
   search: {
     flex: 1,
-    backgroundColor: '#FFF',
-    padding: 12,
+    backgroundColor: colors.surface,
+    padding: spacing.xxl,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#DDD',
+    borderColor: colors.border,
   },
 
   addButton: {
-    marginLeft: 10,
-    backgroundColor: '#FF7A00',
+    marginLeft: spacing.lg,
+    backgroundColor: colors.primary,
     height: 48,
     width: 48,
     borderRadius: 10,
@@ -39,9 +43,9 @@ export const styles = StyleSheet.create({
   },
 
   addText: {
-    color: '#FFF',
-    fontSize: 24,
-    fontWeight: '600',
+    color: colors.white,
+    fontSize: typography.sizes.xxl,
+    fontWeight: typography.weights.semibold,
   },
 
   loader: {
@@ -51,7 +55,9 @@ export const styles = StyleSheet.create({
   },
 
   welcomeUser:{
-    fontSize:22,
-    paddingBottom:12
+    fontSize: typography.sizes.xl,
+    paddingBottom: spacing.xxl,
+    color: colors.text.primary,
+    fontWeight: typography.weights.semibold,
   }
 });

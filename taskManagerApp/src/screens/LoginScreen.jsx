@@ -2,13 +2,13 @@ import React from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
-  StyleSheet,
   KeyboardAvoidingView,
+  ActivityIndicator,
+  Platform,
 } from 'react-native';
 
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { getUser, loginUser } from '@/api/userApi';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -16,12 +16,14 @@ import Toast from 'react-native-toast-message';
 import { useDispatch } from 'react-redux';
 import { setUser } from '@/store/authSlice';
 import { styles } from '@/style/authForm';
+import FormInput from '@/components/FormInput';
+import { ValidationRules } from '@/constants/formConstants';
 
 export default function LoginScreen({ navigation }) {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm();
 
   const dispatch = useDispatch();
@@ -56,61 +58,42 @@ export default function LoginScreen({ navigation }) {
         <View>
           <Text style={styles.title}>Login form</Text>
 
-          <Controller
+          <FormInput
             control={control}
             name="email"
-            rules={{
-              required: 'Email is required',
-              pattern: {
-                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                message: 'Invalid email address',
-              },
-            }}
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                placeholder="Enter email"
-                value={value}
-                keyboardType="email-address"
-                onChangeText={onChange}
-                style={styles.input}
-              />
-            )}
+            rules={ValidationRules.email}
+            placeholder="Enter email"
+            errors={errors}
+            keyboardType="email-address"
+            style={styles.input}
           />
 
-          {errors.email && (
-            <Text style={styles.error}>{errors.email.message}</Text>
-          )}
-
-          <Controller
+          <FormInput
             control={control}
             name="password"
-            rules={{
-              required: 'Password is required',
-              pattern: {
-                value: strongPasswordRegex,
-                message: 'Min 8 character, 1 A-Z, 1 a-z, 1 number, 1 special character',
-              },
-            }}
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                placeholder="Enter password"
-                secureTextEntry
-                value={value}
-                onChangeText={onChange}
-                style={styles.input}
-              />
-            )}
+            rules={ValidationRules.password}
+            placeholder="Enter password"
+            errors={errors}
+            style={styles.input}
+            secureTextEntry
           />
-
-          {errors.password && (
-            <Text style={styles.error}>{errors.password.message}</Text>
-          )}
 
           <TouchableOpacity
             style={styles.loginBtn}
             onPress={handleSubmit(onSubmit)}
           >
-            <Text style={styles.loginText}>Login</Text>
+            {isSubmitting ? (
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <ActivityIndicator
+                  size="small"
+                  color="#fff"
+                  style={{ marginLeft: 8 }}
+                />
+                <Text style={styles.buttonText}>Signing in..</Text>
+              </View>
+            ) : (
+              <Text style={styles.buttonText}>Login</Text>
+            )}
           </TouchableOpacity>
 
           <View style={styles.registerContainer}>
