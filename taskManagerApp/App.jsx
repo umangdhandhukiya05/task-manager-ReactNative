@@ -23,6 +23,8 @@ import AddTaskScreen from '@/screens/AddTaskScreen';
 import EditTaskScreen from '@/screens/EditTaskScreen';
 import ProjectDetailScreen from '@/screens/ProjectDetailScreen';
 import { Icon } from '@rneui/themed';
+import ErrorBoundary from '@/components/ErrorBoundary';
+import NoConection from '@/components/NoConection';
 
 const Stack = createNativeStackNavigator();
 
@@ -152,11 +154,14 @@ function AppContent() {
 
 export default function App() {
   return (
-    <Provider store={store}>
-      <NavigationContainer>
-        <AppContent />
-        <Toast />
-      </NavigationContainer>
-    </Provider>
+    <ErrorBoundary>
+      <Provider store={store}>
+        <NoConection />
+        <NavigationContainer>
+          <AppContent />
+          <Toast />
+        </NavigationContainer>
+      </Provider>
+    </ErrorBoundary>
   );
 }
